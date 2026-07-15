@@ -6,7 +6,7 @@ A MATLAB implementation demonstrating **Single Sideband Suppressed Carrier (SSB-
 
 ---
 
-## 📌 Features
+## Features
 
 * **Interactive Parameters GUI**: Simple dialog prompts to set carrier amplitude, carrier frequency, message frequency vector, and sampling frequency.
 * **Hilbert Transform Modulation**: Generates SSB signals via phasing techniques for either Upper Sideband (USB) or Lower Sideband (LSB).
@@ -16,7 +16,7 @@ A MATLAB implementation demonstrating **Single Sideband Suppressed Carrier (SSB-
 
 ---
 
-## 🛠️ Code Structure
+## Code Structure
 
 ### 1. Main Execution Loop
 
@@ -35,7 +35,7 @@ Continuously launches the prompt dialog, computes signal components, and renders
 
 ---
 
-## 📊 Plot Layout Output
+## Plot Layout Output
 
 The code formats output displays across a 2-row, 3-column figure:
 
@@ -46,7 +46,7 @@ The code formats output displays across a 2-row, 3-column figure:
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
 1. Open MATLAB.
 2. Download or copy the code content into a `.m` file (e.g., `SSBSC_manual.m`).
