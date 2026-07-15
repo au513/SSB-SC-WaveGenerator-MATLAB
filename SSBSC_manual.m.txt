@@ -1,0 +1,64 @@
+syms t w;
+
+function [ssb, specSSB, msg, specMsg, carr, specCarr, t, fAxis]= ssbscwvgn(Ac, fc, fmVec, dur, fs, useUSB)
+        fmMax = max(fmVec);
+        if fs < 2*(fc + fmMax)
+            errordlg(sprintf('Nyquist violated! fs must be > %.1f Hz',2*(fc+fmMax)),'Sampling Error');
+            return;
+        end
+
+        % Signals
+        t   = 0 : 1/fs : dur - 1/fs;
+        N   = length(t);
+        msg = zeros(1,N);
+        for k = 1:numel(fmVec)
+            msg = msg + (1/numel(fmVec)) * cos(2*pi*fmVec(k)*t);
+        end
+         carr = Ac * cos(2*pi*fc*t);
+
+        % SSB via Hilbert phasing
+        msgH   = imag(hilbert(msg));
+        if useUSB
+            ssb     = Ac*(msg.*cos(2*pi*fc*t) - msgH.*sin(2*pi*fc*t));
+        else
+            ssb     = Ac*(msg.*cos(2*pi*fc*t) + msgH.*sin(2*pi*fc*t));
+        end
+        halfN    = floor(N/2)+1;
+            fAxis    = (0:halfN-1)*(fs/N);
+            specMsg  = (2/N)*abs(fft(msg));   specMsg  = specMsg(1:halfN);
+            specCarr = (2/N)*abs(fft(carr));  specCarr = specCarr(1:halfN);
+            specSSB  = (2/N)*abs(fft(ssb));   specSSB  = specSSB(1:halfN);
+end
+
+function [ssb, specSSB, msg, specMsg, carr, specCarr, t, fAxis]= examplewav()
+    syms t;
+    inputs = inputdlg(["Message Frequency" "Carrier Amplitude" "Carrier Frequency" "Sample Frequency"], "Signal Attributes", 4);
+    mesfreq = str2num(inputs{1});
+    carA = str2num(inputs{2});
+    carf = str2num(inputs{3});
+    samf = str2num(inputs{4});
+    % messign = sin(mesfreq * 2 * pi * t); % Generate message signal
+    [ssb, specSSB, msg, specMsg, carr, specCarr, t, fAxis] = ssbscwvgn(carA, carf, mesfreq, 1, samf, true);
+end
+
+while(true)
+    [ssb, specSSB, msg, specMsg, carr, specCarr, tim, fAxis] = examplewav()
+    subplot(2, 3, 1)
+    plot(tim, ssb);
+    title("SSBSC");
+    subplot(2, 3, 2)
+    plot(tim, msg);
+    title( "Message");
+    subplot(2, 3, 3)
+    plot(tim, carr);
+    title("Carrier");
+    subplot(2, 3, 4)
+    plot(fAxis, specSSB);
+    title("SSBSC freq");
+    subplot(2, 3, 5)
+    plot(fAxis, specMsg);
+    title("Message freq");
+    subplot(2, 3, 6)
+    plot(fAxis, specCarr);
+    title("Carrier freq");
+end
